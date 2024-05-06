@@ -1,5 +1,3 @@
-from random import randint
-
 from aiogram import Router, types, F
 from aiogram.filters import CommandStart
 from aiogram.types import CallbackQuery
@@ -29,27 +27,40 @@ async def process_season_choice(season: str, user_id: int, db_quiz: dict):
     return db_quiz
 
 
-async def add_data(session, db_quiz):
-    # Создаем объект Quiz на основе данных из db_quiz
-    data = Quiz(tg_id=db_quiz['user_id'],
-                season=db_quiz['season'],
-                amount=db_quiz['amount'],
-                place=db_quiz['place'],
-                style=db_quiz['style'],
-                colors=db_quiz['colors'],
-                fashion=db_quiz['fashion'],
-                costume=db_quiz['costume'])
-    # Добавляем объект в сессию и сохраняем изменения в БД
-    async with session.begin():
-        session.add(data)
-        print(data)
-    await session.commit()
+# async def add_data(session, db_quiz):
+#     # Создаем объект Quiz на основе данных из db_quiz
+#     data = Quiz(tg_id=db_quiz['user_id'],
+#                 season=db_quiz['season'],
+#                 amount=db_quiz['amount'],
+#                 place=db_quiz['place'],
+#                 style=db_quiz['style'],
+#                 colors=db_quiz['colors'],
+#                 fashion=db_quiz['fashion'],
+#                 costume=db_quiz['costume'])
+#     # Добавляем объект в сессию и сохраняем изменения в БД
+#     async with session.begin():
+#         session.add(data)
+#         print(data)
+#     await session.commit()
+
+
+async def create_async_dict():
+    async_dict = {}
+    return async_dict
+
+
+async def add_to_async_dict(async_dict, key, value):
+    async_dict[key] = value
 
 
 @router.message(CommandStart())
 async def start_cmd(message: types.Message, session: AsyncSession):
     media, reply_markup = await get_menu_content(session, level=0, menu_name="main")
 
+    await add_to_async_dict(async_dict, 'tg_id', message.from_user.id)
+    print("="*50)
+    print(async_dict)
+    print("="*50)
     await message.answer_photo(media.media, caption=media.caption, reply_markup=reply_markup)
 
 
@@ -61,6 +72,14 @@ async def user_menu(callback: CallbackQuery, callback_data: MenuCallBack, sessio
         level=callback_data.level,
         menu_name=callback_data.menu_name,
     )
+
+    await add_to_async_dict(async_dict, str(callback_data.page).split('_')[0], str(callback_data.page).split('_')[1])
+    print("=" * 50)
+    print(async_dict)
+    print("="*50)
+
+    print(str(callback_data.page).split('_')[0])
+    print(str(callback_data.page).split('_')[1])
 
     await callback.message.edit_media(media=media, reply_markup=reply_markup)
     await callback.answer()

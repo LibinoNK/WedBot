@@ -6,6 +6,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 class MenuCallBack(CallbackData, prefix="main"):
     menu_name: str
     level: int | None = None
+    page: str | None = None
 
 
 def get_user_main_btns(*, level: int, sizes: tuple[int] = (2,)):
@@ -19,7 +20,7 @@ def get_user_main_btns(*, level: int, sizes: tuple[int] = (2,)):
     for text, menu_name in btns.items():
         if menu_name == 'season':
             keyboard.add(InlineKeyboardButton(text=text,
-                                              callback_data=MenuCallBack(level=10, menu_name='season').pack()))
+                                              callback_data=MenuCallBack(level=10, menu_name='season', page='str_one').pack()))
         elif menu_name == 'result':
             keyboard.add(InlineKeyboardButton(text=text,
                                               callback_data=MenuCallBack(level=1, menu_name=menu_name).pack()))
@@ -46,16 +47,16 @@ def get_user_season_btns(*, level: int, sizes: tuple[int] = (2,)):
                                               callback_data=MenuCallBack(level=0, menu_name='main').pack()))
         elif menu_name == 'winter':
             keyboard.add(InlineKeyboardButton(text="Зима",
-                                              callback_data=MenuCallBack(level=20, menu_name='amount').pack()))
+                                              callback_data=MenuCallBack(level=20, menu_name='amount', page='season_winter').pack()))
         elif menu_name == 'spring':
             keyboard.add(InlineKeyboardButton(text="Весна",
-                                              callback_data=MenuCallBack(level=20, menu_name='amount').pack()))
+                                              callback_data=MenuCallBack(level=20, menu_name='amount', page='season_spring').pack()))
         elif menu_name == 'summer':
             keyboard.add(InlineKeyboardButton(text="Лето",
-                                              callback_data=MenuCallBack(level=20, menu_name='amount').pack()))
+                                              callback_data=MenuCallBack(level=20, menu_name='amount', page='season_summer').pack()))
         elif menu_name == 'autumn':
             keyboard.add(InlineKeyboardButton(text="Осень",
-                                              callback_data=MenuCallBack(level=20, menu_name='amount').pack()))
+                                              callback_data=MenuCallBack(level=20, menu_name='amount', page='season_autumn').pack()))
     return keyboard.adjust(*sizes).as_markup()
 
 
